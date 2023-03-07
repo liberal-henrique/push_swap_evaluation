@@ -6,24 +6,26 @@
 /*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 17:32:37 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/07 15:31:16 by lliberal         ###   ########.fr       */
+/*   Updated: 2023/03/07 19:02:52 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int		midpoint(t_list **a, int i)
+int	midpoint(t_list **a, int i)
 {
 	t_list	*temp;
-	int	value;
+	t_list	*clone;
+	int		value;
 
-	temp = clone_list(a);
+	clone = clone_list(a);
+	temp = clone;
 	sort_list(&temp);
 	i = i/2;
 	while (i-- != 0 && temp->next != NULL)
 		temp = temp->next;
 	value = temp->x;
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (value);
 }
 
@@ -132,10 +134,12 @@ int		i_first(t_list **root, int start)
 int		md_chunk(t_list **root, int start, int finish)
 {
 	t_list	*temp;
+	t_list	*clone;
 	int		mid;
 	int		result;
 
-	temp = clone_list(root);
+	clone = clone_list(root);
+	temp = clone;
 	sort_list(&temp);
 	mid = (i_last(&temp, finish) - i_first(&temp, start)) / 2;
 	while (temp->next != NULL)
@@ -147,7 +151,7 @@ int		md_chunk(t_list **root, int start, int finish)
 	while (mid-- != 0)
 		temp = temp->next;
 	result = temp->x;
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (result);
 }
 
@@ -234,7 +238,6 @@ void	back_ra(t_list **a, int n_control)
 	int	i;
 
 	i = n_control;
-	//printf("we are here\n");
 	if (list_sorted(a))
 		return ;
 	while (n_control-- != 0 && !list_sorted(a))
@@ -245,15 +248,18 @@ void	back_ra(t_list **a, int n_control)
 
 void	back_pb(t_list **a, t_list **b, int n_control)
 {
+	int	i;
+
 	while (n_control-- != 0)
 	{
-		pa(a, b);
-		printf("%i\n", n_control);
-		if (cnt_rec(*a) > 1 && (*a)->x > (*a)->next->x)
+		i = (*b)->x;
+		if (i > (*a)->x)
 		{
+			pa(a, b);
 			sa(a);
-			printf("Eu entro aqui\n");
 		}
+		else
+			pa(a, b);
 	}
 }
 
@@ -289,6 +295,37 @@ int		find_smallest_chunks_in_a(t_list **root)
 	return (smallest);
 }
 
+int	n_midpoint(t_list **b, int midpoint, int end)
+{
+	t_list	*temp;
+	t_list	*clone;
+	int		i;
+
+	clone = clone_list(b);
+	temp = clone;
+	sort_list(&temp);
+	i = 1;
+	while (temp->next != NULL && temp->x != midpoint)
+		temp = temp->next;
+	while (temp->next != NULL && temp->x != end)
+	{
+		i++;
+		temp = temp->next;
+	}
+	deallocate(&clone, 0);
+	return (i);
+}
+
+void	sort_back_rest(t_list **a, t_list **b, int i, int n)
+{
+	back_ra(a, i);
+	if (!(list_sorted(a)))
+		sort_a(a, b, i);
+	back_pb(a, b, n);
+	if (!(list_sorted(a)))
+		sort_a(a, b, n);
+}
+
 void	sort_a(t_list **a, t_list **b, int n_moviments)
 {
 	int	mid_pnt;
@@ -300,47 +337,21 @@ void	sort_a(t_list **a, t_list **b, int n_moviments)
 	if (list_sorted(a))
 		return ;
 	mid_pnt = md_chunk(a, find_smallest_chunks_in_a(a), find_biggest_chunks_in_a(a, n_moviments));
-	while (n_moviments-- >= 1)
+	while (n_moviments-- > 0)
 	{
-		if ((*a)->x >= mid_pnt && ++ra_control && !list_sorted(a))
+		if ((*a)->x >= mid_pnt && !list_sorted(a))
+		{
 			ra(a);
-		else if ((*a)->x < mid_pnt && ++pb_control)
+			ra_control++;
+		}
+		else if ((*a)->x < mid_pnt)
+		{
 			pb(b, a);
-
+			pb_control++;
+		}
 	}
-	back_ra(a, ra_control);
-	if (!(list_sorted(a)))
-		sort_a(a, b, ra_control);
-	back_pb(a, b, pb_control);
-	if (!(list_sorted(a)))
-		sort_a(a, b, pb_control);
+	sort_back_rest(a, b, ra_control, pb_control);
 }
-
-// void	sort_a(t_list **a, t_list **b, int n_moviments)
-// {
-// 	int	mid_pnt;
-// 	int	ra_control;
-// 	int	pb_control;
-
-// 	ra_control = 0;
-// 	pb_control = 0;
-// 	if (list_sorted(a))
-// 		return ;
-// 	mid_pnt = md_chunk(a, find_smallest_chunks_in_a(a), find_biggest_chunks_in_a(a, n_moviments));
-// 	while (n_moviments-- >= 1)
-// 	{
-// 		if ((*a)->x >= mid_pnt && ++ra_control)
-// 			ra(a);
-// 		else if ((*a)->x < mid_pnt && ++pb_control)
-// 			pb(b, a);
-// 	}
-// 	back_ra(a, ra_control);
-// 	if (!(list_sorted(a)))
-// 		sort_a(a, b, ra_control);
-// 	back_pb(a, b, pb_control);
-// 	if (!(list_sorted(a)))
-// 		sort_a(a, b, pb_control);
-// }
 
 void	sort_back(t_list **a, t_list **b, int i, int n)
 {
@@ -446,31 +457,24 @@ void	send_top_b(t_list **a, t_list **b)
 	sort_a(a, b, i);
 }
 
-//Teoricamente, nos teremos no maximo 5 elementos nessa funcao;
-
-
 //	tentei refatorar esse funcao separando-a em mais funcoes.
 //Contudo, estive 2 horas a ter segmentation fault. Todas as
 //minhas tentativas de separar big e small em outras funcoes
 //retornaram erro e os testes nao foram claros.
 
-int n_midpoint(t_list **b, int midpoint, int end)
+void	rest(t_list **a, t_list **b, int i)
 {
-    t_list  *temp;
-    int i;
+	int n;
 
-    temp = clone_list(b);
-    sort_list(&temp);
-    i = 1;
-    while (temp->next != NULL && temp->x != midpoint)
-        temp = temp->next;
-    while (temp->next != NULL && temp->x != end)
-    {
-        i++;
-        temp = temp->next;
-    }
-    return (i);
+	n = 0;
+	sort_a(a, b, i);
+	n = cnt_rec(*b);
+	while (cnt_rec(*b) > 0)
+		pa(a, b);
+	sort_a(a, b, n);
 }
+
+
 
 void	send_rest(t_list **a, t_list **b)
 {
@@ -479,12 +483,10 @@ void	send_rest(t_list **a, t_list **b)
 	int	small;
 	int	big;
 	int	i;
-	int	n;
 
 	last = *b;
 	small = last->x;
 	big = last->x;
-	n = 0;
 	i = 0;
 	while (last->next != NULL)
 	{
@@ -498,26 +500,19 @@ void	send_rest(t_list **a, t_list **b)
 	small = n_midpoint(b, md_pnt, big);
 	while (small != 0)
 	{
-		if ((*b)->x >= md_pnt && ++i)
+		if ((*b)->x >= md_pnt)
 		{
 			pa(a, b);
 			small--;
-			if (cnt_rec(*a) > 1 && (*a)->x > (*a)->next->x && (*a))
+			i++;
+			if (cnt_rec(*a) > 1 && (*a)->x > (*a)->next->x && (*a)->x != big)
 				sa(a);
 		}
 		else if ((*b)->x < md_pnt)
-		{
 			rb(b);
-			n++;
-		}
 	}
-	sort_a(a, b, i);
-	big = cnt_rec(*b);
-	while (cnt_rec(*b) > 0)
-		pa(a, b);
-	sort_a(a, b, big);
+	rest(a, b, i);
 }
-
 
 void	sort_biggest(t_list **a, t_list **b)
 {
