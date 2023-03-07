@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   moviments.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 11:32:24 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/06 18:31:14 by rasantos         ###   ########.fr       */
+/*   Updated: 2023/03/07 15:14:17 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	sa(t_list **a)
 {
 	t_list	*second;
 
-	if (!*a)
+	if (!*a || cnt_rec(*a) <= 1)
 		return ;
 	second = (*a)->next;
 	(*a)->next = second->next;
@@ -29,7 +29,7 @@ void	sb(t_list **b)
 {
 	t_list	*second;
 
-	if (!*b)
+	if (!*b || cnt_rec(*b) <= 1)
 		return ;
 	second = (*b)->next;
 	(*b)->next = second->next;
@@ -76,7 +76,7 @@ void	ra(t_list **a)
 	t_list	*curr;
 	t_list	*temp;
 
-	if (!*a)
+	if (!*a || cnt_rec(*a) <= 1)
 		return ;
 	curr = *a;
 	temp = *a;
@@ -93,7 +93,7 @@ void	rb(t_list **b)
 	t_list	*curr;
 	t_list	*temp;
 
-	if (!*b)
+	if (!*b || cnt_rec(*b) <= 1)
 		return ;
 	curr = *b;
 	temp = *b;
@@ -117,6 +117,8 @@ void	rra(t_list **a)
 	t_list	*curr;
 	t_list	*before_last;
 
+	if (cnt_rec(*a) <= 1)
+		return ;
 	curr = *a;
 	before_last = *a;
 	while (curr->next != NULL)
@@ -134,6 +136,8 @@ void	rrb(t_list **b)
 	t_list	*curr;
 	t_list	*before_last;
 
+	if (cnt_rec(*b) <= 1)
+		return ;
 	curr = *b;
 	before_last = *b;
 	while (curr->next != NULL)

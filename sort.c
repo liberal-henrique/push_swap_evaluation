@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sort.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 17:32:37 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/06 19:08:08 by rasantos         ###   ########.fr       */
+/*   Updated: 2023/03/07 15:31:16 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,9 +234,10 @@ void	back_ra(t_list **a, int n_control)
 	int	i;
 
 	i = n_control;
-	if (cnt_rec(*a) <= 2 && list_sorted(a))
+	//printf("we are here\n");
+	if (list_sorted(a))
 		return ;
-	while (n_control-- != 0)
+	while (n_control-- != 0 && !list_sorted(a))
 		rra(a);
 	if (i == 2 && !list_sorted(a))
 		sa(a);
@@ -245,7 +246,15 @@ void	back_ra(t_list **a, int n_control)
 void	back_pb(t_list **a, t_list **b, int n_control)
 {
 	while (n_control-- != 0)
+	{
 		pa(a, b);
+		printf("%i\n", n_control);
+		if (cnt_rec(*a) > 1 && (*a)->x > (*a)->next->x)
+		{
+			sa(a);
+			printf("Eu entro aqui\n");
+		}
+	}
 }
 
 int		find_biggest_chunks_in_a(t_list **root, int n_moviments)
@@ -293,10 +302,11 @@ void	sort_a(t_list **a, t_list **b, int n_moviments)
 	mid_pnt = md_chunk(a, find_smallest_chunks_in_a(a), find_biggest_chunks_in_a(a, n_moviments));
 	while (n_moviments-- >= 1)
 	{
-		if ((*a)->x >= mid_pnt && ++ra_control)
+		if ((*a)->x >= mid_pnt && ++ra_control && !list_sorted(a))
 			ra(a);
 		else if ((*a)->x < mid_pnt && ++pb_control)
 			pb(b, a);
+
 	}
 	back_ra(a, ra_control);
 	if (!(list_sorted(a)))
@@ -305,6 +315,32 @@ void	sort_a(t_list **a, t_list **b, int n_moviments)
 	if (!(list_sorted(a)))
 		sort_a(a, b, pb_control);
 }
+
+// void	sort_a(t_list **a, t_list **b, int n_moviments)
+// {
+// 	int	mid_pnt;
+// 	int	ra_control;
+// 	int	pb_control;
+
+// 	ra_control = 0;
+// 	pb_control = 0;
+// 	if (list_sorted(a))
+// 		return ;
+// 	mid_pnt = md_chunk(a, find_smallest_chunks_in_a(a), find_biggest_chunks_in_a(a, n_moviments));
+// 	while (n_moviments-- >= 1)
+// 	{
+// 		if ((*a)->x >= mid_pnt && ++ra_control)
+// 			ra(a);
+// 		else if ((*a)->x < mid_pnt && ++pb_control)
+// 			pb(b, a);
+// 	}
+// 	back_ra(a, ra_control);
+// 	if (!(list_sorted(a)))
+// 		sort_a(a, b, ra_control);
+// 	back_pb(a, b, pb_control);
+// 	if (!(list_sorted(a)))
+// 		sort_a(a, b, pb_control);
+// }
 
 void	sort_back(t_list **a, t_list **b, int i, int n)
 {
@@ -410,49 +446,30 @@ void	send_top_b(t_list **a, t_list **b)
 	sort_a(a, b, i);
 }
 
-void	send_rest2(t_list **a, t_list **b)
-{
-	t_list *last;
-	int	md_pnt;
-	int	small;
-	int	big;
-	int	i;
-	int	n; 
+//Teoricamente, nos teremos no maximo 5 elementos nessa funcao;
 
-	last = *b;
-	small = last->x;
-	big = last->x;
-	n = 0;
-	i = 0;
-	while (last->next != NULL)
-	{
-		if (small > last->x)
-			small = last->x;
-		if (big < last->x)
-			big = last->x;
-		last = last->next;
-	}
-	md_pnt = md_chunk(b, small, big);
-	while ((*b)->x != last->x)
-	{
-		if ((*b)->x >= md_pnt)
-		{
-			pa(a, b);
-			n++;
-		}
-		else if ((*b)->x < md_pnt)
-		{
-			rb(b);
-			i++;
-		}
-	}
-	sort_a(a, b, n);
-	while ((*b) != NULL)
-	{
-		pa(a, b);
-		i++;
-	}
-	sort_a(a, b, i);
+
+//	tentei refatorar esse funcao separando-a em mais funcoes.
+//Contudo, estive 2 horas a ter segmentation fault. Todas as
+//minhas tentativas de separar big e small em outras funcoes
+//retornaram erro e os testes nao foram claros.
+
+int n_midpoint(t_list **b, int midpoint, int end)
+{
+    t_list  *temp;
+    int i;
+
+    temp = clone_list(b);
+    sort_list(&temp);
+    i = 1;
+    while (temp->next != NULL && temp->x != midpoint)
+        temp = temp->next;
+    while (temp->next != NULL && temp->x != end)
+    {
+        i++;
+        temp = temp->next;
+    }
+    return (i);
 }
 
 void	send_rest(t_list **a, t_list **b)
@@ -463,7 +480,6 @@ void	send_rest(t_list **a, t_list **b)
 	int	big;
 	int	i;
 	int	n;
-	int	flag;
 
 	last = *b;
 	small = last->x;
@@ -479,30 +495,29 @@ void	send_rest(t_list **a, t_list **b)
 		last = last->next;
 	}
 	md_pnt = md_chunk(b, small, big);
-	while (flag == 0)
+	small = n_midpoint(b, md_pnt, big);
+	while (small != 0)
 	{
-		if ((*b)->x == last->x)
-			flag = 1;
-		if ((*b)->x > md_pnt)
+		if ((*b)->x >= md_pnt && ++i)
 		{
 			pa(a, b);
-			i++;
+			small--;
+			if (cnt_rec(*a) > 1 && (*a)->x > (*a)->next->x && (*a))
+				sa(a);
 		}
-		else if ((*b)->x <= md_pnt)
+		else if ((*b)->x < md_pnt)
 		{
 			rb(b);
 			n++;
 		}
 	}
 	sort_a(a, b, i);
-	i = n;
-	while (n != 0)
-	{
+	big = cnt_rec(*b);
+	while (cnt_rec(*b) > 0)
 		pa(a, b);
-		n--;
-	}
-	sort_a(a, b, i);
+	sort_a(a, b, big);
 }
+
 
 void	sort_biggest(t_list **a, t_list **b)
 {
@@ -521,43 +536,4 @@ void	sort_biggest(t_list **a, t_list **b)
 			send_bot_b(a, b);
 	}
 	send_rest(a, b);
-}
-
-void	sort_biggest2(t_list **a, t_list **b)
-{
-	t_list	*temp;
-	int	i;
-
-	while (cnt_rec(*a) != 0)
-		best_move(a, b, start(a), end(a));
-	while (cnt_rec(*b) > 15)
-	{
-		temp = (*b);
-		while (temp->next != NULL)
-			temp = temp->next;
-		i = 0;
-		while ((*b)->x > temp->x)
-		{
-			pa(a, b);
-			i++;
-		}
-		sort_a(a, b, i);
-		i = 0;
-		while ((*b)->x < temp->x)
-		{
-			rrb(b);
-			pa(a, b);
-			i++;
-			temp = (*b);
-			while (temp->next != NULL)
-				temp = temp->next;
-		}
-		sort_a(a, b, i);
-	}
-
-	printf("%i\n", cnt_rec(*b));
-	printList(*a);
-	printf("\n");
-	printList(*b);
-	//send_rest(a, b);
 }
