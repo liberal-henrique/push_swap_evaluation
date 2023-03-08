@@ -3,14 +3,15 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+         #
+#    By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/25 15:28:14 by lliberal          #+#    #+#              #
-#    Updated: 2023/03/03 19:08:10 by rasantos         ###   ########.fr        #
+#    Updated: 2023/03/08 11:34:36 by lliberal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC		=	gcc
+# CFLAGS	=	-fsanitize=address
 CFLAGS	=	-Wall -Wextra -Werror
 RM		=	rm -f
 NAME	=	push_swap
@@ -22,13 +23,13 @@ SRCS	=	push_swap.c \
 			moviments.c \
 			sort.c \
 			create_stack.c \
-			
+
 OBJS	=	$(SRCS:.c=.o)
 
 all:	$(NAME)
 
 $(NAME): $(OBJS)
-		$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(INCLUDE)
+		$(CC) $(CFLAGS) $(SRCS)-o $(NAME) $(INCLUDE)
 
 clean:
 		@$(RM) $(OBJS)

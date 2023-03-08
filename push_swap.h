@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 16:10:04 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/06 18:27:47 by rasantos         ###   ########.fr       */
+/*   Updated: 2023/03/08 11:42:30 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_mid
 	int				n;
 	int				i;
 	int				md_pnt;
+	int				bottom;
 }					t_mid;
 
 //----------------Moviments---------------//
@@ -41,7 +42,7 @@ void		pa(t_list **a, t_list **b);
 void		pb(t_list **b, t_list **a);
 void		ra(t_list **a);
 void		rb(t_list **b);
-void		rr(t_list **a ,t_list **b);
+void		rr(t_list **a, t_list **b);
 void		rra(t_list **a);
 void		rrb(t_list **b);
 void		rrr(t_list **a, t_list **b);
@@ -69,7 +70,7 @@ void		sort_4_elements(t_list **a, t_list **b);
 void		sort_5_elements(t_list **a, t_list **b);
 int			gv_i_mid(t_list **a);
 int			give_value_mid(t_list **a);
-void		send_pb(t_list **a, t_list **b, int top, int bottom, int md_pnt);
+void		send_pb(t_list **a, t_list **b, int top, int bottom);
 int			numero_movi(t_list **a, int end);
 int			start(t_list **a);
 int			end(t_list **a);

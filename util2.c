@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   util2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 17:31:19 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/06 19:06:08 by rasantos         ###   ########.fr       */
+/*   Updated: 2023/03/08 11:26:20 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int		small_i(t_list **a)
+int	small_i(t_list **a)
 {
 	t_list	*temp;
 	int		temp_menor;
@@ -38,7 +38,7 @@ int		small_i(t_list **a)
 	return (index_smallest);
 }
 
-int		big_i(t_list **a)
+int	big_i(t_list **a)
 {
 	t_list	*temp;
 	int		temp_maior;
@@ -54,7 +54,7 @@ int		big_i(t_list **a)
 		temp = temp->next;
 	}
 	temp = (*a);
-	while ( temp != NULL)
+	while (temp != NULL)
 	{
 		if (temp->x == temp_maior)
 			break ;
@@ -64,7 +64,7 @@ int		big_i(t_list **a)
 	return (index_biggest);
 }
 
-int		ft_pultimo(t_list **a)
+int	ft_pultimo(t_list **a)
 {
 	t_list	*list_temp;
 	int		pultimo;
@@ -76,7 +76,7 @@ int		ft_pultimo(t_list **a)
 	return (pultimo);
 }
 
-int		ft_meio(t_list **a)
+int	ft_meio(t_list **a)
 {
 	t_list	*list_temp;
 	int		meio;
@@ -98,23 +98,25 @@ void	send_desire(t_list **a, t_list **b, int meio, int pnultimo)
 
 void	sort_3(t_list **a)
 {
-	t_list	*temp;
+	t_list	*tmp;
+	int		topo;
 
-	temp = *a;
-	while (temp->next)
-		temp = temp->next;
-	if ((*a)->x > (*a)->next->x && (*a)->x > temp->x && (*a)->next->x < temp->x)
+	tmp = *a;
+	topo = (*a)->x;
+	while (tmp->next)
+		tmp = tmp->next;
+	if (topo > (*a)->next->x && topo > tmp->x && (*a)->next->x < tmp->x)
 		ra(a);
-	else if ((*a)->x > (*a)->next->x && (*a)->x > temp->x && (*a)->next->x > temp->x)
+	else if (topo > (*a)->next->x && topo > tmp->x && (*a)->next->x > tmp->x)
 	{
 		sa(a);
 		rra(a);
 	}
-	else if ((*a)->x > (*a)->next->x && (*a)->x < temp->x)
+	else if (topo > (*a)->next->x && topo < tmp->x)
 		sa(a);
-	else if ((*a)->x < (*a)->next->x && (*a)->x > temp->x)
+	else if (topo < (*a)->next->x && topo > tmp->x)
 		rra(a);
-	else if ((*a)->x < (*a)->next->x && (*a)->x < temp->x)
+	else if (topo < (*a)->next->x && topo < tmp->x)
 	{
 		sa(a);
 		ra(a);
@@ -154,7 +156,7 @@ void	sort_5_elements(t_list **a, t_list **b)
 	meio = ft_meio(a);
 	pnultimo = ft_pultimo(a);
 	while (cnt_rec(*a) != 3)
- 		send_desire(a, b, meio, pnultimo);
+		send_desire(a, b, meio, pnultimo);
 	if (!list_sorted(a))
 		sort_3(a);
 	if ((*b)->x < (*b)->next->x)
@@ -167,10 +169,7 @@ void	sort_5_elements(t_list **a, t_list **b)
 		sa(a);
 }
 
-
-//-----Send numbers in a organized way to Stack B-----//
-
-int		gv_i_mid(t_list **a)
+int	gv_i_mid(t_list **a)
 {
 	int		mid;
 	int		size;
@@ -184,14 +183,16 @@ int		gv_i_mid(t_list **a)
 	return (mid);
 }
 
-int		give_value_mid(t_list **a)
+int	give_value_mid(t_list **a)
 {
+	t_list	*temp;
+	t_list	*clone;
 	int		mid_value;
 	int		index_mid;
-	t_list	*temp;
 
 	mid_value = 0;
-	temp = clone_list(a);
+	clone = clone_list(a);
+	temp = clone;
 	index_mid = gv_i_mid(a);
 	sort_list(&temp);
 	while (index_mid >= 0 && temp != NULL)
@@ -201,11 +202,11 @@ int		give_value_mid(t_list **a)
 		index_mid--;
 		temp = temp->next;
 	}
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (mid_value);
 }
 
-void	send_pb(t_list **a, t_list **b, int top, int bottom, int md_pnt)
+void	send_pb(t_list **a, t_list **b, int top, int bottom)
 {
 	if (top <= bottom)
 	{
@@ -219,16 +220,16 @@ void	send_pb(t_list **a, t_list **b, int top, int bottom, int md_pnt)
 			rra(a);
 		pb(b, a);
 	}
-	if (cnt_rec(*b) > 1 && (*b)->x < md_pnt)
-		rb(b);
 }
 
-int		numero_movi(t_list **a, int end)
+int	numero_movi(t_list **a, int end)
 {
-	t_list *temp;
-	int	i;
+	t_list	*temp;
+	t_list	*clone;
+	int		i;
 
-	temp = clone_list(a);
+	clone = clone_list(a);
+	temp = clone;
 	sort_list(&temp);
 	i = 1;
 	while (temp->next != NULL && temp->x != end)
@@ -236,28 +237,32 @@ int		numero_movi(t_list **a, int end)
 		i++;
 		temp = temp->next;
 	}
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (i);
 }
 
-int		start(t_list **a)
+int	start(t_list **a)
 {
-	t_list *temp;
-	int	start;
+	t_list	*temp;
+	t_list	*clone;
+	int		start;
 
-	temp = clone_list(a);
+	clone = clone_list(a);
+	temp = clone;
 	sort_list(&temp);
 	start = temp->x;
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (start);
 }
 
-int		end(t_list **a)
+int	end(t_list **a)
 {
-	t_list *temp;
-	int	end;
+	t_list	*temp;
+	t_list	*clone;
+	int		end;
 
-	temp = clone_list(a);
+	clone = clone_list(a);
+	temp = clone;
 	sort_list(&temp);
 	end = 0;
 	while (temp->next != NULL && end != 29)
@@ -266,7 +271,6 @@ int		end(t_list **a)
 		temp = temp->next;
 	}
 	end = temp->x;
-	deallocate(&temp, 0);
+	deallocate(&clone, 0);
 	return (end);
 }
-

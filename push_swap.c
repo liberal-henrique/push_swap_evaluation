@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rasantos <rasantos@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lliberal <lliberal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 17:55:36 by lliberal          #+#    #+#             */
-/*   Updated: 2023/03/03 19:47:34 by rasantos         ###   ########.fr       */
+/*   Updated: 2023/03/08 11:55:28 by lliberal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,16 +244,8 @@ int	main(int argc, char **argv)
 	if (argc < 2)
 		return (0);
 	a = initialize_list(argv + 1, a);
-	if (count_items(a) <= 1)
-	{
+	if (list_sorted(&a) == 1 && count_items(a) >= 1)
 		deallocate(&a, 1);
-		exit(1);
-	}
-	if (list_sorted(&a) == 1)
-	{
-		deallocate(&a, 1);
-		exit(1);
-	}
 	if (cnt_rec(a) <= 3)
 		sort_3(&a);
 	else if (cnt_rec(a) <= 5)
